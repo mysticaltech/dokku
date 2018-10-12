@@ -324,10 +324,14 @@ main() {
     log-fail "Argument 1 must be one of [major, minor, patch, betafish, build], '${RELEASE}' given"
   fi
 
+  log-info "Creating $RELEASE release"
+
   fn-require-bin "docker"
   fn-require-bin "git"
-  fn-require-bin "package_cloud"
-  [[ -n "$PACKAGECLOUD_API_TOKEN" ]] || log-fail "Missing PACKAGECLOUD_API_TOKEN environment variable"
+  if [[ "$RELEASE" != "build" ]]; then
+    fn-require-bin "package_cloud"
+    [[ -n "$PACKAGECLOUD_API_TOKEN" ]] || log-fail "Missing PACKAGECLOUD_API_TOKEN environment variable"
+  fi
 
   CURRENT_VERSION="$(fn-version-current)"
   NEXT_VERSION="$(fn-version-next "$CURRENT_VERSION" "$RELEASE")"

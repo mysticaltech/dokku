@@ -308,7 +308,7 @@ fn-require-bin() {
 main() {
   declare RELEASE="$1"
   local CURRENT_VERSION NEXT_VERSION IS_RELEASE
-  local VALID_RELEASE_LEVELS=("major" "minor" "patch" "betafish")
+  local VALID_RELEASE_LEVELS=("major" "minor" "patch" "betafish", "build")
 
   if [[ "$RELEASE" == '--trace' ]]; then
     shift 1
@@ -317,11 +317,11 @@ main() {
   fi
 
   if [[ -z "$RELEASE" ]]; then
-    log-fail "Argument 1 must be one of [major, minor, patch, betafish], none given"
+    log-fail "Argument 1 must be one of [major, minor, patch, betafish, build], none given"
   fi
 
   if ! fn-in-array "$RELEASE" "${VALID_RELEASE_LEVELS[@]}"; then
-    log-fail "Argument 1 must be one of [major, minor, patch, betafish], '${RELEASE}' given"
+    log-fail "Argument 1 must be one of [major, minor, patch, betafish, build], '${RELEASE}' given"
   fi
 
   fn-require-bin "docker"
@@ -341,11 +341,12 @@ main() {
 
   fn-extract-package "$IS_RELEASE" "dokku-${NEXT_VERSION}-1.x86_64.rpm" || log-fail "Error extracting rpm package"
 
-  fn-publish-package "$IS_RELEASE" "deb" "dokku_${NEXT_VERSION}_amd64.deb" || log-fail "Error publishing deb package"
+  if [[ "$RELEASE" != "build" ]]; then
+    fn-publish-package "$IS_RELEASE" "deb" "dokku_${NEXT_VERSION}_amd64.deb" || log-fail "Error publishing deb package"
+    fn-publish-package "$IS_RELEASE" "rpm" "dokku-${NEXT_VERSION}-1.x86_64.rpm" || log-fail "Error publishing rpm package"
+    fn-repo-push-tags "$IS_RELEASE"
+  fi
 
-  fn-publish-package "$IS_RELEASE" "rpm" "dokku-${NEXT_VERSION}-1.x86_64.rpm" || log-fail "Error publishing rpm package"
-
-  fn-repo-push-tags "$IS_RELEASE"
   if [[ "$IS_RELEASE" != "true" ]]; then
     git reset -q HEAD plugins/*/plugin.toml
     git checkout -- plugins/*/plugin.toml

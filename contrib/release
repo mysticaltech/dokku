@@ -68,7 +68,7 @@ fn-extract-package() {
   [[ "$IS_RELEASE" == "true" ]] && NAME="dokku:build-release"
 
   log-info "(extract-package) writing ${PACKAGE_NAME} to correct path"
-  docker run --rm --entrypoint cat "$NAME" "/data/${PACKAGE_NAME}" > "${ROOT_DIR}/${PACKAGE_NAME}"
+  docker run --rm --entrypoint cat "$NAME" "/data/${PACKAGE_NAME}" > "${ROOT_DIR}/build/${PACKAGE_NAME}"
   return "$?"
 }
 
@@ -308,7 +308,7 @@ fn-require-bin() {
 main() {
   declare RELEASE="$1"
   local CURRENT_VERSION NEXT_VERSION IS_RELEASE
-  local VALID_RELEASE_LEVELS=("major" "minor" "patch" "betafish", "build")
+  local VALID_RELEASE_LEVELS=("major" "minor" "patch" "betafish" "build")
 
   if [[ "$RELEASE" == '--trace' ]]; then
     shift 1
@@ -326,6 +326,7 @@ main() {
 
   log-info "Creating $RELEASE release"
 
+  mkdir -p "build"
   fn-require-bin "docker"
   fn-require-bin "git"
   if [[ "$RELEASE" != "build" ]]; then
@@ -346,8 +347,8 @@ main() {
   fn-extract-package "$IS_RELEASE" "dokku-${NEXT_VERSION}-1.x86_64.rpm" || log-fail "Error extracting rpm package"
 
   if [[ "$RELEASE" != "build" ]]; then
-    fn-publish-package "$IS_RELEASE" "deb" "dokku_${NEXT_VERSION}_amd64.deb" || log-fail "Error publishing deb package"
-    fn-publish-package "$IS_RELEASE" "rpm" "dokku-${NEXT_VERSION}-1.x86_64.rpm" || log-fail "Error publishing rpm package"
+    fn-publish-package "$IS_RELEASE" "deb" "build/dokku_${NEXT_VERSION}_amd64.deb" || log-fail "Error publishing deb package"
+    fn-publish-package "$IS_RELEASE" "rpm" "build/dokku-${NEXT_VERSION}-1.x86_64.rpm" || log-fail "Error publishing rpm package"
     fn-repo-push-tags "$IS_RELEASE"
   fi
 
@@ -355,6 +356,9 @@ main() {
     git reset -q HEAD plugins/*/plugin.toml
     git checkout -- plugins/*/plugin.toml
   fi
+
+  echo "build/dokku_${NEXT_VERSION}_amd64.deb" > build/deb-filename
+  echo "build/dokku-${NEXT_VERSION}-1.x86_64.rpm" > build/rpm-filename
 }
 
 main "$@"

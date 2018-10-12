@@ -6,10 +6,11 @@ set -eo pipefail
 setup_circle() {
   echo "=====> setup_circle on CIRCLE_NODE_INDEX: $CIRCLE_NODE_INDEX"
   sudo -E CI=true make -e sshcommand
+  apt install "$(cat build/deb-filename)"
   # need to add the dokku user to the docker group
   sudo usermod -G docker dokku
   [[ "$1" == "buildstack" ]] && BUILD_STACK=true make -e stack
-  sudo -E CI=true make -e install
+  # sudo -E CI=true make -e install
   sudo -E make -e setup-deploy-tests
   bash --version
   docker version

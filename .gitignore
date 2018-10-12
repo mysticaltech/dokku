@@ -8,4 +8,5 @@ data/
 stack.tgz
 tmp
 coverage.out
+build
 contrib/dokku-update-version

@@ -29,6 +29,7 @@ setup_circle() {
   sudo dpkg -i "build/$SIGIL_PACKAGE_NAME"
 
   sudo add-apt-repository -y ppa:nginx/stable
+  sudo apt-get update
   sudo apt-get -qq -y install nginx
 
   sudo dpkg -i "$(cat build/deb-filename)"

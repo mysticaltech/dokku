@@ -20,7 +20,7 @@ setup_circle() {
   docker run --rm --entrypoint cat "dokku:build" "/data/${SSHCOMMAND_PACKAGE_NAME}" > "build/$SSHCOMMAND_PACKAGE_NAME"
 
   SIGIL_VERSION=$(grep SIGIL_VERSION deb.mk | head -n1 | cut -d' ' -f3)
-  SIGIL_PACKAGE_NAME="gliderlabs-sigil_${SIGIL_VERSION}_amd64.deb"
+  SIGIL_PACKAGE_NAME="gliderlabs_sigil_${SIGIL_VERSION}_amd64.deb"
   docker run --rm --entrypoint cat "dokku:build" "/data/${SIGIL_PACKAGE_NAME}" > "build/$SIGIL_PACKAGE_NAME"
 
   sudo dpkg -i "build/$HEROKUISH_PACKAGE_NAME"

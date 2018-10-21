@@ -117,7 +117,7 @@ endif
 		.
 
 rpm-dokku-update:
-	rm -rf $(BUILD_DIRECTORY)/dokku-update*.rpm
+	rm -rf $(BUILD_DIRECTORY)/$(DOKKU_UPDATE_RPM_PACKAGE_NAME)
 	echo "${DOKKU_UPDATE_VERSION}" > contrib/dokku-update-version
 	sudo fpm -t rpm -s dir -n dokku-update \
 			 --version $(DOKKU_UPDATE_VERSION) \
@@ -176,7 +176,7 @@ rpm-sshcommand:
 			 .
 
 rpm-sigil:
-	rm -rf /tmp/tmp /tmp/build $(BUILD_DIRECTORY)/$(SIGIL_PACKAGE_NAME)
+	rm -rf /tmp/tmp /tmp/build $(BUILD_DIRECTORY)/$(SIGIL_RPM_PACKAGE_NAME)
 	mkdir -p /tmp/tmp /tmp/build /tmp/build/usr/bin
 
 	@echo "-> Downloading package"

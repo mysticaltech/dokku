@@ -2,6 +2,7 @@
 .dockerignore
 .git
 .vagrant
+build
 contrib
 docs
 tests

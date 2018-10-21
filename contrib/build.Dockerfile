@@ -27,7 +27,7 @@ ARG DOKKU_VERSION=master
 ARG DOKKU_GIT_REV
 ARG IS_RELEASE=false
 
-ENV GOPATH=/go
+ENV GOPATH=/go BUILD_DIRECTORY=/data
 
 RUN PLUGIN_MAKE_TARGET=${PLUGIN_MAKE_TARGET} \
     DOKKU_VERSION=${DOKKU_VERSION} \
@@ -35,11 +35,9 @@ RUN PLUGIN_MAKE_TARGET=${PLUGIN_MAKE_TARGET} \
     IS_RELEASE=${IS_RELEASE} \
     SKIP_GO_CLEAN=true \
     make version copyfiles \
+    && mkdir -p /data \
     && rm -rf plugins/common/*.go  plugins/common/glide*  plugins/common/vendor/ \
     && make deb-herokuish deb-dokku deb-plugn deb-sshcommand deb-sigil deb-dokku-update \
             rpm-herokuish rpm-dokku rpm-plugn rpm-sshcommand rpm-sigil rpm-dokku-update
 
-RUN mkdir -p /data \
-    && cp /tmp/*.deb /data \
-    && cp /tmp/*.rpm /data \
-    && ls -lha /data/
+RUN ls -lha /data/

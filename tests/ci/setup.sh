@@ -27,6 +27,8 @@ setup_circle() {
   sudo dpkg -i "build/$PLUGN_PACKAGE_NAME"
   sudo dpkg -i "build/$SSHCOMMAND_PACKAGE_NAME"
   sudo dpkg -i "build/$SIGIL_PACKAGE_NAME"
+
+  sudo add-apt-repository -y ppa:nginx/stable
   sudo apt-get -qq -y install nginx
 
   sudo dpkg -i "$(cat build/deb-filename)"

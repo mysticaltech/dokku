@@ -32,6 +32,13 @@ setup_circle() {
   sudo apt-get update
   sudo apt-get -qq -y install nginx
 
+  echo "dokku dokku/hostname string dokku.me"              | sudo debconf-set-selections
+  echo "dokku dokku/key_file string /root/.ssh/id_rsa.pub" | sudo debconf-set-selections
+  echo "dokku dokku/nginx_enable boolean true"             | sudo debconf-set-selections
+  echo "dokku dokku/skip_key_file boolean true"            | sudo debconf-set-selections
+  echo "dokku dokku/vhost_enable boolean true"             | sudo debconf-set-selections
+  echo "dokku dokku/web_config boolean false"              | sudo debconf-set-selections
+
   sudo dpkg -i "$(cat build/deb-filename)"
   # need to add the dokku user to the docker group
   sudo usermod -G docker dokku
